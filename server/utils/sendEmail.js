@@ -18,12 +18,15 @@ export const sendEmail = async ({email, subject, message}) => {
     });
 
     const mailOptions = {
-         from: process.env.SMTP_MAIL,
-         to: email,
-         subject,
-         html: message
+        from: process.env.SMTP_MAIL,
+        to: email,
+        subject: subject,
+        html: message
     }
 
- await transporter.sendMail(mailOptions);
+ const info = await transporter.sendMail(mailOptions);
 
+  
+
+  return info;
 }

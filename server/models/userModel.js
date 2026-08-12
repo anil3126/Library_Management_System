@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -40,7 +41,7 @@ const userSchema = new mongoose.Schema({
         url: String
     },
     verificationCode: Number,
-    verificationCodeExpiry: Date,
+    verificationCodeExpire: Date,
     resetPasswordToken: String,
     resetPasswordExpire: Date,
 
@@ -57,8 +58,14 @@ userSchema.methods.generateVerificationCode = function () {
     
     const verificationCode = generateRandomFiveDigitNumber();
         this.verificationCode = verificationCode,
-        this.verificationCodeExpiry = Date.now() + 15 * 60 * 1000;
+        this.verificationCodeExpire = Date.now() + 15 * 60 * 1000;
         return verificationCode;
+}
+
+userSchema.methods.generateToken = function() {
+     return jwt.sign({id: this._id},process.env.JWT_SECRET_KEY,{
+        expiresIn: process.env.JWT_EXPIRE,
+     })
 }
 
 export const User = mongoose.model("User", userSchema);
