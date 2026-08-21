@@ -34,7 +34,7 @@ const authSlice = createSlice({
        otpVerificationSuccess(state, action){
             state.loading=false
             state.message=action.payload.message;
-            state.isAuthenticate=true;
+            state.isAuthenticated=true;
             state.user = action.payload.user;
 
         },
@@ -65,7 +65,7 @@ const authSlice = createSlice({
         },
         logoutSuccess(state,action){
             state.loading=false;
-            state.message=actions.payload;
+            state.message=action.payload;
             state.isAuthenticated=false;
             state.user=null;
 
@@ -173,7 +173,7 @@ export const register = (data) => async(dispatch) => {
 
 export const otpVerification = (email,otp) => async(dispatch) =>{
       dispatch(authSlice.actions.otpVerificationRequest());
-      await axios.post("http://localhost:4000/api/v1/auth/verfiy-otp",{email,otp},{
+      await axios.post("http://localhost:4000/api/v1/auth/verify-otp",{email,otp},{
         withCredentials: true,
         headers: {
             "Content-Type": "application/json"
@@ -194,7 +194,7 @@ export const login = (data) => async(dispatch) =>{
         headers: "application/json"
     })
     .then((res)=>{
-        dispatch(authSlice.actions.loginSuccess(res.dat))
+        dispatch(authSlice.actions.loginSuccess(res.data))
     })
     .catch((error) => {
         dispatch(authSlice.actions.loginFailed(error.response.data.message))
