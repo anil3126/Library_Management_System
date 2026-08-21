@@ -58,11 +58,17 @@ export const register  = catchAsyncError( async (req , res, next) => {
 });
 
 export const verifyOtp = catchAsyncError(async (req, res,next) => {
+    
+    
     const{email, otp} = req.body
+    
 
     if(!email || !otp){
+        
         return next(new ErrorHandler("Email or otp is missing",400))   
     }
+
+
 
     try{
 
@@ -71,10 +77,14 @@ export const verifyOtp = catchAsyncError(async (req, res,next) => {
         accountVerified: false,
     }).sort({ createdAt: -1});
 
+    
+
     if(userAllEntries.length == 0){
+       
          return next(new ErrorHandler("User not found",404))
     }
 
+    
    
     let user;
 

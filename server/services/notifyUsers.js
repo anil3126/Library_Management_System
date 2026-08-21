@@ -7,11 +7,11 @@ export const notifyUsers = () =>{
     cron.schedule("*/10 * * * * *",async ()=>{
         try{
 
-             console.log("Cron job running...");
+             
 
                const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-               console.log("One day ago:", oneDayAgo);
+               
                const allBorrowers = await Borrow.find();
 
          
@@ -28,7 +28,7 @@ export const notifyUsers = () =>{
                
 
                for(const element of borrowers){
-                 console.log("Processing borrower:", element);
+                
                  if(element.user && element.user.email){
                     
                     sendEmail({
