@@ -248,7 +248,7 @@ export const forgotPassword = (email) => async(dispatch) => {
 
 export const resetPassword = (data,token) =>async(dispatch) =>{
     dispatch(authSlice.actions.resetPasswordRequest());
-    await axios.put(`http://localhost:4000/api/v1/auth/password/reset/${token}`,{data,token},{
+    await axios.put(`http://localhost:4000/api/v1/auth/password/reset/${token}`,data,{
         withCredentials: true,
         headers: {
             "Content-Type": "application/json"
