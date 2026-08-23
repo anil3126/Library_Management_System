@@ -80,13 +80,13 @@ const authSlice = createSlice({
             state.error=null;
             state.message=null;
         },
-        getUserSuccess(state,actions){
+        getUserSuccess(state,action){
             state.loading=false;
             state.user=action.payload.user;
             state.isAuthenticated=true;
         },
         getUserFailed(state,actions){
-           state.loding=false;
+           state.loading=false;
            state.user=null;
            state.isAuthenticated=false;
 
