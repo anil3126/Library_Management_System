@@ -9,4 +9,4 @@ const SettingPopup = () => {
   )
 }
 
-export default SettingPopup
+export default SettingPopup;

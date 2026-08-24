@@ -12,11 +12,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout, resetAuthSlice } from "../store/slices/authSlice";
 import { toast } from "react-toastify"
 import { toggleAddNewAdminPopup, toggleSettingPopup } from "../store/slices/popUpSlice";
+import AddNewAdmin from "../popups/AddNewAdmin"
+import SettingPopup from "../popups/SettingPopup";
 
 const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
   const dispatch = useDispatch();
 
-  const { addNewAdminPopup } = useSelector(state => state.popup);
+  const { addNewAdminPopup , settingPopup} = useSelector(state => state.popup);
 
    const {loading,
         error,
@@ -89,9 +91,8 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
               onClick={()=> dispatch(toggleAddNewAdminPopup())}
                 >
                   
-               
-
                 <RiAdminFill className="w-6 h-6"/> <span>Add New Admin</span>
+
               </button>
                 </>
                 )
@@ -134,10 +135,13 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
             <img src={closeIcon} alt="icon" onClick={() => setIsSideBarOpen(!isSideBarOpen)}
             className="h-fit w-fit absolute top-0 right-4 mt-4 block md:hidden" />
 
-              
-
+            
 
          </aside>
+
+         {addNewAdminPopup && <AddNewAdmin />}
+          {settingPopup && <SettingPopup />}
+          
   </>;
 };
 
