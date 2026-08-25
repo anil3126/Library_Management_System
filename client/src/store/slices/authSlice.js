@@ -1,6 +1,7 @@
 import { applyMiddleware, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import ResetPassword from "../../pages/ResetPassword";
+import { toggleSettingPopup } from "./popUpSlice";
 
 const authSlice = createSlice({
     name: "auth",
@@ -262,7 +263,7 @@ export const resetPassword = (data,token) =>async(dispatch) =>{
     })
 }
 
-export const updatePassord = (data) => async(dispatch) => {
+export const updatePassword = (data) => async(dispatch) => {
     dispatch(authSlice.actions.updatePasswordRequest());
 
     await axios.put("http://localhost:4000/api/v1/auth/password/update",data,{
@@ -273,6 +274,7 @@ export const updatePassord = (data) => async(dispatch) => {
     })
     .then((res)=>{
         dispatch(authSlice.actions.updatePasswordSuccess(res.data.message))
+        dispatch(toggleSettingPopup())
     })
     .catch((error)=>{
         dispatch(authSlice.actions.updatePasswordFailed(error.response.data.message))

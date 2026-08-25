@@ -66,7 +66,7 @@ const Header = () => {
       </div>
       <span className="bg-black h-14 w-[2px]"/>
       <img src={settingIcon} alt="settingIcon"
-       className="w-8 h-8" onClick={() => toggleSettingPopup()} />
+       className="w-8 h-8" onClick={() => dispatch(toggleSettingPopup())} />
     </div>
 
   </header>
