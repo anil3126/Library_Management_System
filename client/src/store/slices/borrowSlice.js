@@ -68,7 +68,7 @@ const borrowSlice = createSlice({
              state.error=action.payload;
              state.message=null;
         },
-        resetBookSlice(state){
+        resetBorrowSlice(state){
             state.loading=false;
             state.error=null;
             state.message=null;
@@ -137,8 +137,8 @@ export const returnBook =(email,id)=>async (dispatch)=>{
    })
 }
 
-export const resetBookSlice =()=>(dispatch)=>{
-     dispatch(borrowSlice.actions.resetBookSlice());
+export const resetBorrowSlice =()=>(dispatch)=>{
+     dispatch(borrowSlice.actions.resetBorrowSlice());
 }
 
 export default borrowSlice.reducer;

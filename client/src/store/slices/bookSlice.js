@@ -79,4 +79,8 @@ export const addBook = (data) =>async(dispatch) =>{
     
 }
 
+export const resetBookSlice = () => (dispatch)=>{
+    dispatch(bookSlice.actions.resetBookSlice())
+}
+
 export default bookSlice.reducer;
