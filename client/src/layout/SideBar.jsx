@@ -99,11 +99,11 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
  }
 
               {
-                isAuthenticated && user?.role === "user" && (
+                isAuthenticated && user?.role === "User" && (
 
                   <>
                    <button className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor-pointer flex items-center space-x-2" onClick={()=>
-                setSelectedComponent("My Borrowed Books")}>
+                     setSelectedComponent("My Borrowed Books")}>
 
                 <img src={catalogIcon} alt="icon" />
                 <span>My Borrowed Books</span>

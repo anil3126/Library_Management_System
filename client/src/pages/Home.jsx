@@ -11,6 +11,7 @@ import Catalog from "../components/Catalog"
 import MyBorrowedBooks from "../components/MyBorrowedBooks"
 import Users from "../components/Users"
 
+
 const Home = () => {
 
      const [isSideBarOpen, setIsSideBarOpen] = useState(false);
@@ -64,7 +65,7 @@ const Home = () => {
                 break;
 
             case "My Borrowed Books":
-                 if(user.role === "Admin"){
+                 if(user.role === "User"){
                     return <MyBorrowedBooks/>
                  }
               break;
