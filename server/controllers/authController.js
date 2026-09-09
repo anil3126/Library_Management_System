@@ -7,6 +7,7 @@ import { sendVerificationCode } from "../utils/sendVerificationCode.js";
 import { sendToken } from "../utils/sendToken.js";
 import { generateForgotPasswordEmailTemplate } from "../utils/emailTemplates.js";
 import { sendEmail } from "../utils/sendEmail.js"
+import { validatePassword } from "../utils/validatePassword.js";
 
 export const register  = catchAsyncError( async (req , res, next) => {
 
@@ -36,9 +37,11 @@ export const register  = catchAsyncError( async (req , res, next) => {
     }
 
 
-    if(password.length < 8 || password.length > 16){
-        return next(new ErrorHandler("Password must be between 8 and 16 characters.",400))
-    }
+     const isPasswordValidate = validatePassword(password);
+     if(isPasswordValidate){
+        return next(new ErrorHandler(isPasswordValidate,400))
+     }
+   
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
