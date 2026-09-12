@@ -8,6 +8,8 @@ export const sendToken = (user,statusCode,message,res)=>{
 
         ),
         httpOnly: true,
+        secure: true,
+        sameSite: "None"
     }).json({
         success:true,
         user,
