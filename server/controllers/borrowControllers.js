@@ -9,17 +9,15 @@ import { calculateFine } from "../utils/fineCalculator.js";
 export const recordBorrowedBook = catchAsyncError(async (req ,res ,next)=>{
      const {id} = req.params;
      const {email} = req.body;
+     const dueDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
 
-     const book = await Book.findById(id);
-     if(!book){
-        return next(new ErrorHandler("Book not found.",404));
-     }
+     const [book, user] = await Promise.all(
+      [Book.findById(id),User.findOne({email: email.trim() })]
+   )
 
-     const user = await User.findOne({email });
-
-     if(!user){
-        return next(new ErrorHandler("User not found",404));
-     }
+     if(!book)  return next(new ErrorHandler("Book not found.",404));
+     if(!user)  return next(new ErrorHandler("User not found",404));
+     
      if(book.quantity === 0){
         return next(new ErrorHandler("Book is not Available.",400));
      }
@@ -40,7 +38,7 @@ export const recordBorrowedBook = catchAsyncError(async (req ,res ,next)=>{
         bookId: book._id,
         bookTitle: book.title,
         borrowedDate: new Date(),
-        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        dueDate,
      })
 
      await user.save();
@@ -52,7 +50,7 @@ export const recordBorrowedBook = catchAsyncError(async (req ,res ,next)=>{
             email: user.email
         },
         book: book._id,
-        dueDate: new Date(Date.now() + 7*24 *60 * 60 * 1000),
+        dueDate,
         price: book.price
      });
 
@@ -112,13 +110,13 @@ export const returnBorrowedBook = catchAsyncError(async (req ,res ,next)=>{
       borrow.fine = fine;
       await borrow.save();
 
+      const message = fine !== 0? `The book has returned successfully. the total charges, including a fine, are $${fine + book.price}`
+        : `The book has been returned successfully. The total charges are $${book.price}`
+
      res.status(200).json({
         success: true,
-        message: fine !== 0? `The book has returned successfully. the total charges, including a fine, are $${fine + book.price}`: `The book has been returned successfully. The total charges are $${book.price}`
-     });
-
-
-      
+        message,
+     });  
 })
 
 
@@ -137,7 +135,7 @@ export const borrowedBooks = catchAsyncError(async(req,res,next)=>{
 
 export const getBorrowedBooksForAdmin = catchAsyncError(async (req ,res ,next)=>{
       
-   const borrowedBooks =  await Borrow.find();
+   const borrowedBooks =  await Borrow.find().lean();
    res.status(200).json({
       success:true,
       borrowedBooks,

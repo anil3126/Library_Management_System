@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { BookA, NotebookPen } from "lucide-react";
+import { BookA, NotebookPen, Trash2 } from "lucide-react";
 import {useDispatch, useSelector} from "react-redux"
-import { toggleAddBookPopup, toggleReadBookPopup, toggleRecordBookPopup } from "../store/slices/popUpSlice";
+import { toggleAddBookPopup, toggleDeleteBookPopup, toggleReadBookPopup, toggleRecordBookPopup } from "../store/slices/popUpSlice";
 import {toast} from "react-toastify"
 import { fetchAllBooks, resetBookSlice } from "../store/slices/bookSlice";
 import { fetchAllBorrowedBooks, resetBorrowSlice } from "../store/slices/borrowSlice";
@@ -9,6 +9,7 @@ import Header from "../layout/Header"
 import AddBookPopup from "../popups/AddBookPopup"
 import ReadBookPopup from "../popups/ReadBookPopup"
 import RecordBookPopup from "../popups/RecordBookPopup"
+import DeleteBookPopup from "../popups/DeleteBookPopup";
 
 const BookManagement = () => {
     
@@ -23,7 +24,9 @@ const BookManagement = () => {
   const { 
         addBookPopup,
         readBookPopup,
-        recordBookPopup
+        recordBookPopup,
+        deleteBookPopup,
+        bookIdToDelete
          } = useSelector((state)=> state.popup)
 
   const {
@@ -160,7 +163,10 @@ const BookManagement = () => {
                               {isAuthenticated && user?.role === "Admin" && (
                                <td className="px-4 py-2 flex space-x-2 my-3 justify-center">
                                 <BookA onClick={()=> openReadPopup(book._id)} />
-                                  <NotebookPen onClick={() => openRecordBookPopup(book._id)} />
+                                <NotebookPen onClick={() => openRecordBookPopup(book._id)} />
+                                 <Trash2 className="text-red-500 cursor-pointer" onClick={()=>
+                                   dispatch(toggleDeleteBookPopup(book._id))
+                                 }/>
                                </td>
                                )}
                              </tr>
@@ -181,6 +187,7 @@ const BookManagement = () => {
         {addBookPopup && <AddBookPopup/>}
         {readBookPopup && <ReadBookPopup book={readBook}/>}
         {recordBookPopup && <RecordBookPopup bookId={borrowBookId}/>}
+        {deleteBookPopup && <DeleteBookPopup bookId={bookIdToDelete}/> }
   </>
   );
 };

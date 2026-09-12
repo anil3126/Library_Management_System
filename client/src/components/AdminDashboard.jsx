@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import adminIcon from "../assets/pointing.png";
+import avatarHolder from "../assets/avatarHolder.png"
 import usersIcon from "../assets/people-black.png";
 import bookIcon from "../assets/book-square.png";
 import { Pie } from "react-chartjs-2";
@@ -151,7 +152,7 @@ const AdminDashboard = () => {
             <div className="flex flex-col lg:flex-row flex-1 items-center justify-center">
               <div className="bg-white p-5 rounded-lg shadow-lg h-full flex flex-col justify-center
               items-center gap-4">
-                <img src={user && user.avatar?.url} alt="avatar" 
+                <img src={user && user?.avatar?.url || avatarHolder} alt="avatar" 
                      className="rounded-full w-32 h-32 object-cover"
                   />
                   <h2 className="text-xl 2xl:text-2xl font-semibold text-center">{user && user.name}</h2>

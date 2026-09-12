@@ -8,6 +8,7 @@ import { sendToken } from "../utils/sendToken.js";
 import { generateForgotPasswordEmailTemplate } from "../utils/emailTemplates.js";
 import { sendEmail } from "../utils/sendEmail.js"
 import { validatePassword } from "../utils/validatePassword.js";
+import { validateFields } from "../utils/validateFields.js";
 
 export const register  = catchAsyncError( async (req , res, next) => {
 
@@ -16,10 +17,13 @@ export const register  = catchAsyncError( async (req , res, next) => {
      
     const {name, email, password} = req.body;
 
-    if(!name || !email || !password){
-        return next(new ErrorHandler("please enter all fields.",400));
+    const validationError = validateFields({name,email,password});
+   
+    if(validationError){
+        return next(new ErrorHandler(validationError, 400));
     }
 
+  
     const isRegistered = await User.findOne({email, accountVerified: true});
 
     if (isRegistered){
@@ -37,9 +41,9 @@ export const register  = catchAsyncError( async (req , res, next) => {
     }
 
 
-     const isPasswordValidate = validatePassword(password);
-     if(isPasswordValidate){
-        return next(new ErrorHandler(isPasswordValidate,400))
+     const passwordValidationError = validatePassword(password);
+     if(passwordValidationError){
+        return next(new ErrorHandler(passwordValidationError,400))
      }
    
 
@@ -136,9 +140,13 @@ export const verifyOtp = catchAsyncError(async (req, res,next) => {
 export const login = catchAsyncError(async (req,res,next) => {
     const {email, password} = req.body;
 
-    if(!email || !password){
-        return next(new ErrorHandler("Please enter all fields.",400))
+    const validationError = validateFields({email,password});
+
+    if(validationError){
+        return next(new ErrorHandler(validationError, 400));
     }
+
+    
 
     const user = await User.findOne({email, accountVerified: true}).select("+password")
 
@@ -215,7 +223,7 @@ export const forgotPassword = catchAsyncError(async(req,res,next) => {
         user.resetPasswordExpire = undefined;
         await user.save({validateBeforeSave: false});
 
-        return next(new ErrorHandler(error.message, 500));
+        return next(new ErrorHandler(error.message || "Cannot send email.", 500));
     }
 })
 
@@ -233,13 +241,10 @@ export const resetPassword = catchAsyncError(async (req,res,next)=>{
         return next(new ErrorHandler("Reset password token is invalid or has been expired",400))
       }
 
-      if(req.body.password !== req.body.confirmPassword){
-        return next(new ErrorHandler("Password & confirm password do not match",400));
-      }
-
-      if(req.body.password.length < 8 || req.body.password.length > 16 || req.body.confirmPassword.length < 8 || req.body.confirmPassword.length > 16){
-         return next(new ErrorHandler("Password must be between 8 to 16 characters.",400));
-      }
+      const passwordValidationError = validatePassword(req.body.password, req.body.confirmPassword);
+     if(passwordValidationError){
+        return next(new ErrorHandler(passwordValidationError, 400))
+     }
 
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
       user.password = hashedPassword;
@@ -256,9 +261,11 @@ export const updatePassword = catchAsyncError(async (req,res,next)=>{
 
    const {currentPassword, newPassword, confirmNewPassword} = req.body;
 
-   if(!currentPassword || !newPassword || !confirmNewPassword){
-      return next(new ErrorHandler("Please enter all fields.",400))
+   const validateFieldsError = validateFields({currentPassword, newPassword, confirmNewPassword});
+   if(validateFieldsError){
+    return next(new ErrorHandler(validateFieldsError,400));
    }
+  
 
    const isPasswordMatched = await bcrypt.compare(currentPassword, user.password);
 
@@ -266,13 +273,12 @@ export const updatePassword = catchAsyncError(async (req,res,next)=>{
     return next(new ErrorHandler("Current password is incorrect.",400));
    }
 
-   if(newPassword.length < 8 || newPassword.length > 16 || confirmNewPassword.length < 8 || confirmNewPassword.length > 16){
-      return next(new ErrorHandler("Password must be between 8 to 16 characters."))
+   const passwordValidationError = validatePassword(newPassword, confirmNewPassword);
+   if(passwordValidationError){
+    return next(new ErrorHandler(passwordValidationError, 400))
    }
 
-   if(newPassword !== confirmNewPassword){
-    return next(new ErrorHandler("New password and confirm new password do not match",400))
-   }
+   
 
    const hashedPassword = await bcrypt.hash(newPassword, 10);
    user.password = hashedPassword;

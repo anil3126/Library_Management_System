@@ -4,6 +4,8 @@ import { User } from "../models/userModel.js";
 import bcrypt from "bcrypt";
   
 import { v2 as cloudinary } from "cloudinary"
+import { validatePassword } from "../utils/validatePassword.js";
+import { validateFields } from "../utils/validateFields.js";
 
 export const getAllUsers = catchAsyncError(async(req ,res ,next)=>{
     const users = await User.find({accountVerified: true});
@@ -20,18 +22,27 @@ export const registerNewAdmin = catchAsyncError(async (req ,res, next) => {
     }
 
     const {name, email, password} = req.body;
-    if(!name || !email || !password){
-        return next(new ErrorHandler("Please enter all fields.",400));
+
+    const validateFieldsError = validateFields({name,email,password});
+
+    if(validateFieldsError){
+        return next(new ErrorHandler(validateFieldsError,400))
     }
+    
 
     const isRegistered = await User.findOne({email, accountVerified: true});
 
     if(isRegistered){
         return next(new ErrorHandler("User already registered.",400))
     }
-    if(password.length < 8 || password.length > 16){
-        return next(new ErrorHandler("Password must be between 8 to 16 characters",400))
+
+    const validatePasswordError = validatePassword({password});
+    
+    if(validatePasswordError){
+        return next(new ErrorHandler(validatePasswordError,400));
     }
+
+   
 
     const { avatar } = req.files;
 
