@@ -3,7 +3,7 @@ import { config } from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import  connectDB  from "./database/db.js";
-import { errorMiddleware } from "./middlewares/errorMiddleWares.js"; 
+
 import authRouter  from "./routes/authRouter.js";
 import bookRouter from "./routes/bookRouter.js";
 import borrowRouter from "./routes/borrowRouter.js";
@@ -11,7 +11,7 @@ import expressFileupload from "express-fileupload"
 import userRouter from "./routes/userRouter.js"
 import { notifyUsers } from "./services/notifyUsers.js";
 import { removeUnverifiedAccounts } from "./services/removeUnverifiedAccount.js";
-
+import { errorMiddleware } from "./middlewares/errorMiddlewares.js";
 
 export const app = express();
 
