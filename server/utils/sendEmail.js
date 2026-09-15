@@ -2,6 +2,8 @@ import nodemailer from "nodemailer";
 
 export const sendEmail = async ({email, subject, message}) => {
 
+    console.log("SMTP MAIL:", process.env.SMTP_MAIL);
+    console.log("SMTP PASSWORD EXISTS:", !!process.env.SMTP_PASSWORD);
 
     const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
@@ -18,6 +20,8 @@ export const sendEmail = async ({email, subject, message}) => {
 
     });
 
+    console.log("SMTP CONNECTION SUCCESS");
+
     const mailOptions = {
         from: process.env.SMTP_MAIL,
         to: email,
@@ -27,7 +31,7 @@ export const sendEmail = async ({email, subject, message}) => {
 
  const info = await transporter.sendMail(mailOptions);
 
-  
+  console.log("EMAIL SENT:", info.messageId);
 
   return info;
 }
