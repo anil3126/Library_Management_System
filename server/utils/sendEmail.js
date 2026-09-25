@@ -1,38 +1,29 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendEmail = async ({ email, subject, message }) => {
+    try {
+        console.log("RESEND API KEY EXISTS:", !!process.env.RESEND_API_KEY);
 
-    console.log("SMTP MAIL:", process.env.SMTP_MAIL);
-    console.log(
-        "SMTP PASSWORD EXISTS:",
-        !!process.env.SMTP_PASSWORD
-    );
+        const { data, error } = await resend.emails.send({
+            from: "BookWorm Library <onboarding@resend.dev>",
+            to: [email],
+            subject: subject,
+            html: message,
+        });
 
-    const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: true,
-        auth: {
-            user: process.env.SMTP_MAIL,
-            pass: process.env.SMTP_PASSWORD,
-        },
-    });
+        if (error) {
+            console.error("RESEND ERROR:", error);
+            throw new Error(error.message);
+        }
 
-    // Actually verify SMTP connection
-    await transporter.verify();
+        console.log("EMAIL SENT:", data.id);
 
-    console.log("SMTP CONNECTION SUCCESS");
+        return data;
 
-    const mailOptions = {
-        from: process.env.SMTP_MAIL,
-        to: email,
-        subject: subject,
-        html: message,
-    };
-
-    const info = await transporter.sendMail(mailOptions);
-
-    console.log("EMAIL SENT:", info.messageId);
-
-    return info;
+    } catch (error) {
+        console.error("SEND EMAIL ERROR:", error);
+        throw error;
+    }
 };
