@@ -131,7 +131,7 @@ export const verifyOtp = catchAsyncError(async (req, res,next) => {
 
 } catch(error){
 
-    console.error("VERIFY OTP ERROR:", error);
+    
     return next(new ErrorHandler("Internal server error",500))
 }
 

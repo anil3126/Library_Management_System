@@ -9,7 +9,7 @@ import { calculateFine } from "../utils/fineCalculator.js";
 export const recordBorrowedBook = catchAsyncError(async (req ,res ,next)=>{
      const {id} = req.params;
      const {email} = req.body;
-     const dueDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+     const dueDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) 
 
      const [book, user] = await Promise.all(
       [Book.findById(id),User.findOne({email: email.trim() })]

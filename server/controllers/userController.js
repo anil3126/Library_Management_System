@@ -61,7 +61,7 @@ export const registerNewAdmin = catchAsyncError(async (req ,res, next) => {
     );
  
      if(!cloudinaryResponse || cloudinaryResponse.error){
-        console.error("Cloudinary error:",cloudinaryResponse.error || "Unknown cloudinary error");
+        
 
         return next(new ErrorHandler("Failed to upload image to cloudinary.",500));
         
