@@ -1,26 +1,10 @@
-import { TransactionalEmailsApi, TransactionalEmailsApiApiKeys, SendSmtpEmail } from '@getbrevo/brevo';
+import { BrevoClient } from '@getbrevo/brevo';
+
+const brevo = new BrevoClient({
+  apiKey: process.env.BREVO_API_KEY,
+});
 
 export const sendEmail = async ({ email, subject, message }) => {
-  // Initialize the API instance directly
-  let apiInstance = new TransactionalEmailsApi();
-
-  // Set the API key
-  apiInstance.setApiKey(
-    TransactionalEmailsApiApiKeys.apiKey,
-    process.env.BREVO_API_KEY
-  );
-
-  // Initialize the email object directly
-  let sendSmtpEmail = new SendSmtpEmail();
-
-  sendSmtpEmail.sender = {
-    name: "Bookworm Library",
-    email: process.env.BREVO_SENDER_EMAIL,
-  };
-  sendSmtpEmail.to = [{ email }];
-  sendSmtpEmail.subject = subject;
-  sendSmtpEmail.htmlContent = message;
-
   console.log("--- DEBUG INFO ---");
   console.log(
     "Key Length:",
@@ -30,9 +14,17 @@ export const sendEmail = async ({ email, subject, message }) => {
   console.log("------------------");
 
   try {
-    await apiInstance.sendTransacEmail(sendSmtpEmail);
+    await brevo.transactionalEmails.sendTransacEmail({
+      subject: subject,
+      htmlContent: message,
+      sender: {
+        name: "Bookworm Library",
+        email: process.env.BREVO_SENDER_EMAIL,
+      },
+      to: [{ email }],
+    });
   } catch (error) {
-    const errMsg = error?.response?.body?.message || error.message;
+    const errMsg = error?.body?.message || error.message;
     throw new Error(errMsg || "Failed to send email");
   }
 };
