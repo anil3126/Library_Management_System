@@ -1,17 +1,17 @@
-import SibApiV3Sdk from '@getbrevo/brevo';
+import { TransactionalEmailsApi, TransactionalEmailsApiApiKeys, SendSmtpEmail } from '@getbrevo/brevo';
 
 export const sendEmail = async ({ email, subject, message }) => {
-  // Initialize the API instance
-  let apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+  // Initialize the API instance directly
+  let apiInstance = new TransactionalEmailsApi();
 
-  // Set the API key using the proper SDK enum reference
+  // Set the API key
   apiInstance.setApiKey(
-    SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey,
+    TransactionalEmailsApiApiKeys.apiKey,
     process.env.BREVO_API_KEY
   );
 
-  // Initialize the email object using the SDK namespace
-  let sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+  // Initialize the email object directly
+  let sendSmtpEmail = new SendSmtpEmail();
 
   sendSmtpEmail.sender = {
     name: "Bookworm Library",
