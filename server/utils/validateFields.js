@@ -4,5 +4,5 @@ export const validateFields = (fields) =>{
             return `${key} is required.`;
         }
      }
-     return null;
+     return null; 
 }

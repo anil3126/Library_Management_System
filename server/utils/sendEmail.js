@@ -1,29 +1,36 @@
-import { Resend } from "resend";
+import {
+  TransactionalEmailsApi,
+  TransactionalEmailsApiApiKeys,
+  SendSmtpEmail,
+} from "@getbrevo/brevo";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const apiInstance = new TransactionalEmailsApi();
+apiInstance.setApiKey(
+  TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY,
+);
 
 export const sendEmail = async ({ email, subject, message }) => {
-    try {
-        console.log("RESEND API KEY EXISTS:", !!process.env.RESEND_API_KEY);
+  const sendSmtpEmail = new SendSmtpEmail();
 
-        const { data, error } = await resend.emails.send({
-            from: "BookWorm Library <onboarding@resend.dev>",
-            to: [email],
-            subject: subject,
-            html: message,
-        });
-
-        if (error) {
-            console.error("RESEND ERROR:", error);
-            throw new Error(error.message);
-        }
-
-        console.log("EMAIL SENT:", data.id);
-
-        return data;
-
-    } catch (error) {
-        console.error("SEND EMAIL ERROR:", error);
-        throw error;
-    }
+  sendSmtpEmail.sender = {
+    name: "Bookworm Library",
+    email: process.env.BREVO_SENDER_EMAIL,
+  };
+  sendSmtpEmail.to = [{ email }];
+  sendSmtpEmail.subject = subject;
+  sendSmtpEmail.htmlContent = message;
+  console.log("--- DEBUG INFO ---");
+  console.log(
+    "Key Length:",
+    process.env.BREVO_API_KEY ? process.env.BREVO_API_KEY.length : "UNDEFINED",
+  );
+  console.log("Sender:", process.env.BREVO_SENDER_EMAIL);
+  console.log("------------------");
+  try {
+    await apiInstance.sendTransacEmail(sendSmtpEmail);
+  } catch (error) {
+    const errMsg = error?.response?.body?.message || error.message;
+    throw new Error(errMsg || "Failed to send email");
+  }
 };
